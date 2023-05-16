@@ -1,0 +1,37 @@
+name: Build Packer Vagrant Box
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_windows_amd64.zip -O packer.zip
+          Expand-Archive -Path packer.zip -DestinationPath $env:USERPROFILE
+          $env:PATH += ";$env:USERPROFILE"
+          packer --version
+
+      - name: Install Hyper-V tools
+        run: |
+          powershell -Command "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All"
+          powershell -Command "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-Clients -All"
+
+      - name: Restore Packer Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ runner.workspace }}/packer_cache
+          key: ${{ runner.os }}-packer-${{ hashFiles('**/truenas-scale.pkr.hcl') }}
+          
+      - name: Build Vagrant Box
+        run: packer build -only=hyperv-iso.truenas-scale-amd64 truenas-scale.pkr.hcl
+        env:
+            vagrant_box: truenas-scale-22.1-amd64-hyperv.box
