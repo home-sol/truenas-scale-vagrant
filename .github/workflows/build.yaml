@@ -24,8 +24,8 @@ jobs:
 
       - name: Install Hyper-V tools
         run: |
-          powershell -Command "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All"
-          powershell -Command "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-Clients -All"
+          Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+          Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-Clients -All
 
       - name: Restore Packer Cache
         uses: actions/cache@v2
@@ -34,6 +34,7 @@ jobs:
           key: ${{ runner.os }}-packer-${{ hashFiles('**/truenas-scale.pkr.hcl') }}
           
       - name: Build Vagrant Box
-        run: packer build -only=hyperv-iso.truenas-scale-amd64 truenas-scale.pkr.hcl
+        run: |
+          packer build -only=hyperv-iso.truenas-scale-amd64 -on-error=abort -timestamp-ui truenas-scale.pkr.hcl
         env:
             vagrant_box: truenas-scale-22.1-amd64-hyperv.box
