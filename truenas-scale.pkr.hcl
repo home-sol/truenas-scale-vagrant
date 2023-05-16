@@ -90,5 +90,7 @@ build {
     ]
     output               = var.vagrant_box
     vagrantfile_template = "Vagrantfile.template"
+    compression_level    = 9
+    keep_input_artifact  = false
   }
 }
