@@ -35,6 +35,6 @@ jobs:
           
       - name: Build Vagrant Box
         run: |
-          packer build -only=hyperv-iso.truenas-scale-amd64 -on-error=abort -timestamp-ui truenas-scale.pkr.hcl
+          packer build -only="hyperv-iso.truenas-scale-amd64" -on-error=abort -timestamp-ui truenas-scale.pkr.hcl
         env:
             vagrant_box: truenas-scale-22.1-amd64-hyperv.box
