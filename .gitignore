@@ -2,6 +2,7 @@
 output-*/
 packer_cache/
 *.log
+*.box
 
 # IDEs
 .vscode/

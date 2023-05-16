@@ -13,8 +13,8 @@ variable "iso_checksum" {
   default = "sha256:73a86e1ea163d5cd70dd2133b70fdea47ed7bba1a39c8d489110c8d8949562cf"
 }
 
-variable "vm_name" {
-  type = string
+variable "vagrant_box" {
+  type    = string
 }
 
 locals {
@@ -52,10 +52,9 @@ source "hyperv-iso" "truenas-scale-amd64" {
   iso_checksum     = var.iso_checksum
   iso_url          = var.iso_url
   switch_name      = "Default Switch"
-  headless         = false
+  headless         = true
   boot_wait        = "5s"
   boot_command     = local.boot_command
-  vm_name          = "truenas-scale-amd64"
   disk_size        = var.disk_size
   ssh_username = "root"
   ssh_password = "root"
@@ -74,5 +73,13 @@ build {
     inline = [
       "cat /etc/os-release",
     ]
+  }
+
+  post-processor "vagrant" {
+    only = [
+      "hyperv-iso.truenas-scale-amd64",
+    ]
+    output               = var.vagrant_box
+    vagrantfile_template = "Vagrantfile.template"
   }
 }
