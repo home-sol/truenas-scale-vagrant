@@ -1,0 +1,9 @@
+# packer
+output-*/
+packer_cache/
+
+# IDEs
+.vscode/
+.idea/
+
+
