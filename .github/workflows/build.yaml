@@ -23,10 +23,9 @@ jobs:
         with:
           version: ${{ env.PACKER_VERSION }}
 
-      - name: Install Hyper-V tools
+      - name: Check if Hyper-V tools installed
         run: |
-          Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
-          Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-Clients -All
+          echo "::debug " $((Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V))
 
       - name: Restore Packer Cache
         uses: actions/cache@v3
