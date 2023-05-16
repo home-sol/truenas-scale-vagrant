@@ -17,6 +17,15 @@ variable "vagrant_box" {
   type    = string
 }
 
+packer {
+  required_plugins {
+    hyperv = {
+      version = ">= 1.0.0"
+      source  = "github.com/hashicorp/hyperv"
+    }
+  }
+}
+
 locals {
   boot_steps = [
     ["<enter>", "select Start TrueNAS Scale Installation"],
