@@ -28,7 +28,7 @@ jobs:
           Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-Clients -All
 
       - name: Restore Packer Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ runner.workspace }}/packer_cache
           key: ${{ runner.os }}-packer-${{ hashFiles('**/truenas-scale.pkr.hcl') }}
