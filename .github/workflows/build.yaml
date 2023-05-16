@@ -5,6 +5,10 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+env:
+  PACKER_VERSION: "1.8.6"
+
 jobs:
   build:
     runs-on: windows-latest
@@ -13,14 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Packer
-        run: |
-          $url = 'https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_windows_amd64.zip'
-          $outputPath = 'packer.zip'
-          Invoke-WebRequest -Uri $url -OutFile $outputPath
-          Expand-Archive -Path packer.zip -DestinationPath $env:USERPROFILE
-          $env:PATH += ";$env:USERPROFILE"
-          packer --version
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PACKER_VERSION }}
 
       - name: Install Hyper-V tools
         run: |
@@ -32,9 +33,13 @@ jobs:
         with:
           path: ${{ runner.workspace }}/packer_cache
           key: ${{ runner.os }}-packer-${{ hashFiles('**/truenas-scale.pkr.hcl') }}
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init ./truenas-scale.pkr.hcl"
           
       - name: Build Vagrant Box
         run: |
-          packer build -only="hyperv-iso.truenas-scale-amd64" -on-error=abort -timestamp-ui truenas-scale.pkr.hcl
+          packer build -only="hyperv-iso.truenas-scale-amd64" -color=false -on-error=abort -timestamp-ui truenas-scale.pkr.hcl
         env:
-            vagrant_box: truenas-scale-22.1-amd64-hyperv.box
+          PKR_VAR_vagrant_box: truenas-scale-22.1-amd64-hyperv.box
