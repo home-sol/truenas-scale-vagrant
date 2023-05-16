@@ -15,7 +15,9 @@ jobs:
 
       - name: Install Packer
         run: |
-          wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_windows_amd64.zip -O packer.zip
+          $url = 'https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_windows_amd64.zip'
+          $outputPath = 'packer.zip'
+          Invoke-WebRequest -Uri $url -OutFile $outputPath
           Expand-Archive -Path packer.zip -DestinationPath $env:USERPROFILE
           $env:PATH += ";$env:USERPROFILE"
           packer --version
